@@ -15,9 +15,19 @@ setInterval(checkAvailableLifts, 1000);
 
 callBtns.forEach((btn, index) => {
     btn.addEventListener('click', () => {
-        if (btn.innerHTML !== 'Arrived') {
+        console.log(`Button clicked: ${btn.innerHTML}`); // Debugging log
+        
+        // Prevent action if the button indicates "Arrived" or is in the "waiting" state
+        if (btn.innerHTML === 'Arrived' || btn.innerHTML === 'waiting') {
+            console.log('Button is in a waiting or arrived state. No action taken.');
+            return; // Do nothing if the lift has arrived or is currently waiting
+        }
+
+        // Proceed if the button is in the "call" state
+        if (btn.innerHTML === 'call') {
             btn.classList.add('btn-waiting');
             btn.innerHTML = 'waiting';
+            console.log('Lift is being called.');
 
             const targetY = floorPositions[index];
             const nearestLiftIndex = findNearestAvailableLift(targetY);
@@ -27,6 +37,7 @@ callBtns.forEach((btn, index) => {
             } else {
                 btn.innerHTML = 'busy';
                 waitingQueue.push({ floorIndex: index, targetY: targetY, btn: btn });
+                console.log('No lifts available. Added to waiting queue.');
             }
         }
     });
