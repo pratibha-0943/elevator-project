@@ -15,7 +15,13 @@ setInterval(checkAvailableLifts, 1000);
 
 callBtns.forEach((btn, index) => {
     btn.addEventListener('click', () => {
-        if (btn.innerHTML !== 'Arrived') {
+        // Prevent action if the button indicates "Arrived" or is in the "waiting" state
+        if (btn.innerHTML === 'Arrived' || btn.innerHTML === 'waiting') {
+            return; // Do nothing if the lift has arrived or is currently waiting
+        }
+
+        // Proceed if the button is in the "call" state
+        if (btn.innerHTML === 'call') {
             btn.classList.add('btn-waiting');
             btn.innerHTML = 'waiting';
 
