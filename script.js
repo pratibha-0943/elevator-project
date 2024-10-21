@@ -13,21 +13,13 @@ let waitingQueue = [];
 
 setInterval(checkAvailableLifts, 1000);
 
+// Adding click event listeners to call buttons
 callBtns.forEach((btn, index) => {
     btn.addEventListener('click', () => {
-        console.log(`Button clicked: ${btn.innerHTML}`); // Debugging log
-        
-        // Prevent action if the button indicates "Arrived" or is in the "waiting" state
-        if (btn.innerHTML === 'Arrived' || btn.innerHTML === 'waiting') {
-            console.log('Button is in a waiting or arrived state. No action taken.');
-            return; // Do nothing if the lift has arrived or is currently waiting
-        }
-
-        // Proceed if the button is in the "call" state
-        if (btn.innerHTML === 'call') {
+        // Proceed only if the button is in the 'Call' state
+        if (btn.innerHTML === 'Call') {
             btn.classList.add('btn-waiting');
-            btn.innerHTML = 'waiting';
-            console.log('Lift is being called.');
+            btn.innerHTML = 'Waiting...'; // Change text to indicate waiting
 
             const targetY = floorPositions[index];
             const nearestLiftIndex = findNearestAvailableLift(targetY);
@@ -35,9 +27,8 @@ callBtns.forEach((btn, index) => {
             if (nearestLiftIndex !== -1) {
                 moveLift(nearestLiftIndex, targetY, btn);
             } else {
-                btn.innerHTML = 'busy';
+                btn.innerHTML = 'Busy';
                 waitingQueue.push({ floorIndex: index, targetY: targetY, btn: btn });
-                console.log('No lifts available. Added to waiting queue.');
             }
         }
     });
@@ -51,11 +42,11 @@ function checkAvailableLifts() {
             const nearestLiftIndex = findNearestAvailableLift(targetY);
 
             if (nearestLiftIndex !== -1) {
-                btn.innerHTML = 'waiting'; 
+                btn.innerHTML = 'Waiting...'; 
                 moveLift(nearestLiftIndex, targetY, btn);
-                return false;
+                return false; // Remove from the queue
             }
-            return true; 
+            return true; // Keep in the queue
         });
     }
 }
@@ -82,7 +73,7 @@ function findNearestAvailableLift(targetY) {
 function moveLift(liftIndex, targetY, btn) {
     const lift = lifts[liftIndex]; 
     lift.style.position = 'absolute';
-
+    
     lift.classList.remove('lift-black');
     lift.classList.add('lift-moving'); 
 
@@ -128,16 +119,17 @@ function moveLift(liftIndex, targetY, btn) {
         timeDisplay.remove();
     }, arrivalTime);
 
+    // Add a delay of 2 seconds before resetting the button and checking for available lifts
     setTimeout(() => {
         resetButtonAndLift(liftIndex, btn); 
-    }, arrivalTime + 1500); 
+    }, arrivalTime + 1500 + 2000); // Wait 2 seconds (2000 ms) after arriving
 }
 
 // Function to reset button and lift after reaching the target floor
 function resetButtonAndLift(liftIndex, btn) {
     btn.classList.remove('btn-arrived');
     btn.classList.add('btn-call');
-    btn.innerHTML = 'call';
+    btn.innerHTML = 'Call';
     btn.disabled = false;  
 
     const lift = lifts[liftIndex];
