@@ -23,7 +23,7 @@ h1 {
 .lift{
     border:1px solid rgb(171, 169, 169);
     width: 180px;
-    height: 60px;
+    height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,4 +95,11 @@ i.lift-icon.fas.fa-elevator {
 }
 .lift-arrived {
     background-color: green; 
+}
+.lift-time-display {
+    background-color: #f0f0f0; /* Light background */
+    border: 1px solid #ccc; /* Border style */
+    padding: 5px; /* Some padding */
+    font-size: 14px; /* Font size */
+    color: #333; /* Text color */
 }
