@@ -26,7 +26,7 @@ callBtns.forEach((btn, index) => {
             const targetY = floorPositions[index];
             callCount[index]++; // Increment the call count for this floor
 
-            const liftIndex = findLiftForFloor(index); // Find the lift based on the current call count
+            const liftIndex = findLiftForFloor(index); // Find the lift based on proximity
 
             if (liftIndex !== -1) {
                 moveLift(liftIndex, targetY, btn, index);
@@ -57,17 +57,26 @@ function checkAvailableLifts() {
     }
 }
 
-// Function to find a lift for a given floor based on call count
+// Function to find a lift for a given floor based on proximity
 function findLiftForFloor(floorIndex) {
     const liftCount = lifts.length;
+    const availableLifts = [];
+
     for (let i = 0; i < liftCount; i++) {
-        const liftIndex = (callCount[floorIndex] - 1 + i) % liftCount; // Circularly pick the lift
-        // Ensure the lift is idle and not the last one dispatched for this floor
-        if (liftStates[liftIndex] === 'idle' && liftIndex !== lastLiftForFloor[floorIndex]) {
-            return liftIndex;
+        // Check if the lift is idle and not the last dispatched lift for this floor
+        if (liftStates[i] === 'idle' && i !== lastLiftForFloor[floorIndex]) {
+            const currentLiftPosition = liftCurrentPositions[i];
+            const targetPosition = floorPositions[floorIndex];
+            const distance = Math.abs(currentLiftPosition - targetPosition);
+            availableLifts.push({ liftIndex: i, distance });
         }
     }
-    return -1; // No available lifts
+
+    // Sort available lifts by distance
+    availableLifts.sort((a, b) => a.distance - b.distance);
+
+    // Return the index of the closest available lift, if any
+    return availableLifts.length > 0 ? availableLifts[0].liftIndex : -1; // No available lifts
 }
 
 // Function to move a lift to the target floor
@@ -82,7 +91,7 @@ function moveLift(liftIndex, targetY, btn, floorIndex) {
 
     const currentLiftY = liftCurrentPositions[liftIndex];
     const distance = Math.abs(targetY - currentLiftY);
-    const speed = 50; 
+    const speed = 60; 
     const arrivalTime = (distance / speed) * 1000; 
 
     lift.style.top = `${currentLiftY}px`;
