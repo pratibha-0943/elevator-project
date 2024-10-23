@@ -63,10 +63,11 @@ function findLiftForFloor(floorIndex) {
     const availableLifts = [];
 
     for (let i = 0; i < liftCount; i++) {
-        // Check if the lift is idle and not the last dispatched lift for this floor
-        if (liftStates[i] === 'idle' && i !== lastLiftForFloor[floorIndex]) {
-            const currentLiftPosition = liftCurrentPositions[i];
-            const targetPosition = floorPositions[floorIndex];
+        const currentLiftPosition = liftCurrentPositions[i];
+        const targetPosition = floorPositions[floorIndex];
+
+        // Check if the lift is idle, not at the target floor, and not the last dispatched lift for this floor
+        if (liftStates[i] === 'idle' && currentLiftPosition !== targetPosition && i !== lastLiftForFloor[floorIndex]) {
             const distance = Math.abs(currentLiftPosition - targetPosition);
             availableLifts.push({ liftIndex: i, distance });
         }
